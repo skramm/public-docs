@@ -7,7 +7,7 @@
 \usepackage{graphicx}
 \usepackage{palatino}
 \usepackage[left=1.80cm, right=1.50cm,vmargin=18mm]{geometry}
-\author{Sebastien Kramm}
+\author{Sebastien Kramm\\{\tt sebastien.kramm@univ-rouen.fr}}
 \title{Un outil de planification des enseignements}
 
 \parskip=0.5em plus 0.1em minus 0.1em
@@ -19,15 +19,19 @@
 
 \section{Presentation}
 
-Cette feuille de calcul a pour objectif l'aide à la planification d'un semestre, 
-En entrée, on indique quand on souhaite sur quelle semaine on souhaite placer les séances de CM, TD et TP.
-Ce document permet de visualiser de façon simple l'organisation du semestre et de répondre par exemple aux questions suivantes:
+Cette feuille de calcul a pour objectif l'aide à la planification d'un semestre, dans un contexte d'un département d'IUT, avec deux formations en parallèle (appelée ici "FI" et "FA").
+En entrée, on indique sur quelle semaine on souhaite placer les séances de CM, TD et TP.
+Ce document permet de planifier et visualiser de façon simple l'organisation du semestre et de répondre par exemple aux questions suivantes:
 
 \begin{itemize}
 \item Les étudiants et/ou les enseignants ne vont-il pas avoir des semaines trop chargées sur une certaine période ?
-\item De combien de créneaux d'amphi vais-je avoir besoin sur chaque semaine.
+\item De combien de créneaux d'amphi vais-je avoir besoin sur chaque semaine?
+Combien de créneaux de TP ?
+\item Quel pourcentage du PPN cette planification va-t-elle réaliser ?
 \end{itemize}
 
+D'un point de vue "adaptabilité", le document est actuellement pensé pour une formation de 2 UE, avec en tout 17 modules.
+Mais il peut sans trop de difficulté être adapté à d'autres situations.
 
 \subsection{Utilisation pratique et généralités}
 
@@ -39,12 +43,12 @@ Le document a été conçu pour minimiser les saisies utilisateur, de façon à 
 Format: le document est au format OpenDocument (.odt) et a été developpée avec LibreOffice 6.0.
 Il ne contient aucune macro et devrait donc fonctionner sans problème avec Microsoft Excel.
 
-La feuille produit comme résultat
+La feuille produit comme résultat:
 \begin{itemize}
-\item un histogramme montrant le volume horaire hebdomadaire résultant, pour un étudiant.
-\item le volume total par module, avec la ventilation CM-TD-TP 
-\item le volume
-\item l'écart avec le PPN
+\item un histogramme montrant le volume horaire hebdomadaire résultant, pour un étudiant,
+\item le volume total "étudiant" par module, avec la ventilation CM-TD-TP,
+\item le volume hebdomadaire total pour chaque module, avec la ventilation CM-TD-TP,
+\item l'écart avec le PPN.
 \end{itemize}
 
 
@@ -61,6 +65,9 @@ On ne met ici que les semaines effectives, c'est à dire hors semaines de congé
 \end{itemize}
 
 Eventuellement, on peut aussi "griser" les semaines où les FA sont absents dans l'onglet "FA", ce façon à les rendre plus visible.
+
+De même, on peut renseigner dans l'onglet "Totaux" le nombre de jours effectifs de chaque semaine, ce qui permet de calculer sur cette feuille le volume horaire moyen des étudiants pour chaque semaine.
+
 
 \subsection{Saisie des données}
 
@@ -80,6 +87,19 @@ Attention, la durée d'une séance est identique, que ce soit CM, TD ou TP.
 Si on veut des TP de 1h30, on met donc "1", pour des TP de 3h, il faudra noter "2".
 
 Pour le coté pratique, lors de la saisie des données, on pourra avantageusement "filter" l'affichage via le filtre prévu sur la colonne "UE".
+
+\subsection{Présentation des résultats}
+
+Sur l'onglet "tot\_mod", on peut voir le bilan du volume placé par étudiant, pour chaque module, ventilé par CM-TD-TP.
+Ceci correspond à la colonne "TOTAL" des feuilles de saisies, mais exprimé en heure plutôt qu'en nombre de séances.
+
+Sur l'onglet "tot\_prof", on peut voir le total par semaine pour chaque module du volume qu'il y a à effectuer, en additionnant les volumes CM, TD et TP.
+Cette information est pertinente dans la mesure où il arrive qu'un module soit pris en charge en intégralité par un enseignant, et cette visualisation permet donc de s'assurer que le volume hebdomadaire reste raisonnable.
+
+Cet onglet est en deux partie.
+Sur la partie supérieure est présenté le total FI+FA,
+et sur la partie inférieure on a la ventilation entre les deux formations.
+
 
 \section{Détails techniques}
 
