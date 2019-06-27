@@ -1,0 +1,98 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{palatino}
+\usepackage[left=1.80cm, right=1.50cm,vmargin=18mm]{geometry}
+\author{Sebastien Kramm}
+\title{Un outil de planification des enseignements}
+
+\parskip=0.5em plus 0.1em minus 0.1em
+\parindent=0pt
+
+\begin{document}
+
+\maketitle
+
+\section{Presentation}
+
+Cette feuille de calcul a pour objectif l'aide à la planification d'un semestre, 
+En entrée, on indique quand on souhaite sur quelle semaine on souhaite placer les séances de CM, TD et TP.
+Ce document permet de visualiser de façon simple l'organisation du semestre et de répondre par exemple aux questions suivantes:
+
+\begin{itemize}
+\item Les étudiants et/ou les enseignants ne vont-il pas avoir des semaines trop chargées sur une certaine période ?
+\item De combien de créneaux d'amphi vais-je avoir besoin sur chaque semaine.
+\end{itemize}
+
+
+\subsection{Utilisation pratique et généralités}
+
+
+D'une façon générale, seules les cellules en noir doivent et/ou peuvent être renseignées, les autres (en bleu) sont ou statiques, ou calculées automatiquement.
+
+Le document a été conçu pour minimiser les saisies utilisateur, de façon à ce qu'il n'y ait pas de redondance.
+
+Format: le document est au format OpenDocument (.odt) et a été developpée avec LibreOffice 6.0.
+Il ne contient aucune macro et devrait donc fonctionner sans problème avec Microsoft Excel.
+
+La feuille produit comme résultat
+\begin{itemize}
+\item un histogramme montrant le volume horaire hebdomadaire résultant, pour un étudiant.
+\item le volume total par module, avec la ventilation CM-TD-TP 
+\item le volume
+\item l'écart avec le PPN
+\end{itemize}
+
+
+
+\section{Mode d'emploi}
+
+\subsection{Travail préliminaire}
+\begin{itemize}
+\item Dans l'onglet "static", indiquer le semestre concerné, à coté de la cellule SEM
+\item Dans l'onglet "static", indiquer les semaines concernées dans la colonne "semaines".
+On ne met ici que les semaines effectives, c'est à dire hors semaines de congé.
+
+\item Dans l'onglet {\tt vol\_PPN}, donner sur les 3 colonnes et pour chaque module le volume prévu par le PPN
+\end{itemize}
+
+Eventuellement, on peut aussi "griser" les semaines où les FA sont absents dans l'onglet "FA", ce façon à les rendre plus visible.
+
+\subsection{Saisie des données}
+
+Le document dispose de deux onglets, "FI" et "FA", qui doivent être considérés séparemment.
+
+D'abord, il faut définir pour chaque enseignement et chaque module (chaque ligne du tableau) le volume horaire que l'on souhaite placer.
+En effet, dans chaque département, on peut souhaiter "pousser" un peu plus tel volume par rapport un autre, par rapport au volume prévu au PPN.
+
+La feuille de saisie montre sur chaque ligne le volume "PPN", permettant de remplir à coté la cellule "colume prévu" en fonction de ce que l'on souhaite.
+Pour les FA, le volume affiché pour le PPN est réduit en fonction du coefficient que l'on a indiqué dans l'onglet "static"
+(voir {\tt COEFF\_FA}).
+Il est à 0,8 par défaut.
+
+Ensuite, pour chaque module, on indique dans l'onglet "FI" et "FA" les séances CM-TD-TP dans le tableau, sur la semaine où l'on souhaite les placer, exprimé en nombre de séances.
+
+Attention, la durée d'une séance est identique, que ce soit CM, TD ou TP.
+Si on veut des TP de 1h30, on met donc "1", pour des TP de 3h, il faudra noter "2".
+
+Pour le coté pratique, lors de la saisie des données, on pourra avantageusement "filter" l'affichage via le filtre prévu sur la colonne "UE".
+
+\section{Détails techniques}
+
+Le premier onglet ("FI") contient beaucoup de formules dont le résultat est ensuite référencé ailleurs.
+Par exemple, les volumes PPN, les codes-module, les numéros de semaines, etc.
+Ces formules font appel notamment:
+\begin{itemize}
+\item à la fonction d'indirection ({\tt INDIRECT()}), permettant de renvoyer le contenu d'une cellule en spécifiant son adresse, 
+\item à la fonction permettant de spécifier une adresse par rapport à un numéro de ligne/colonne ({\tt ADDRESS()})
+\item aux fonctions permettant de renvoyer le numéro de ligne / de colonne de la cellule courante ({\tt ROW()}, {\tt COL()})
+
+\end{itemize}
+
+
+
+\end{document}
