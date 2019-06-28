@@ -71,7 +71,7 @@ De même, on peut renseigner dans l'onglet "Totaux" le nombre de jours effectifs
 
 \subsection{Saisie des données}
 
-Le document dispose de deux onglets, "FI" et "FA", qui doivent être considérés séparemment.
+Le document dispose de deux onglets, "FI" et "FA", correspondant aux deux formations gérées.
 
 D'abord, il faut définir pour chaque enseignement et chaque module (chaque ligne du tableau) le volume horaire que l'on souhaite placer.
 En effet, dans chaque département, on peut souhaiter "pousser" un peu plus tel volume par rapport un autre, par rapport au volume prévu au PPN.
@@ -83,20 +83,20 @@ Il est à 0,8 par défaut.
 
 Ensuite, pour chaque module, on indique dans l'onglet "FI" et "FA" les séances CM-TD-TP dans le tableau, sur la semaine où l'on souhaite les placer, exprimé en nombre de séances.
 
-Attention, la durée d'une séance est identique, que ce soit CM, TD ou TP.
-Si on veut des TP de 1h30, on met donc "1", pour des TP de 3h, il faudra noter "2".
+%Attention, la durée d'une séance est identique, que ce soit CM, TD ou TP.
+%Si on veut des TP de 1h30, on met donc "1", pour des TP de 3h, il faudra noter "2".
 
 Pour le coté pratique, lors de la saisie des données, on pourra avantageusement "filter" l'affichage via le filtre prévu sur la colonne "UE".
 
 \subsection{Présentation des résultats}
 
 Sur l'onglet "tot\_mod", on peut voir le bilan du volume placé par étudiant, pour chaque module, ventilé par CM-TD-TP.
-Ceci correspond à la colonne "TOTAL" des feuilles de saisies, mais exprimé en heure plutôt qu'en nombre de séances.
+Ceci correspond à la colonne "TOTAL" des feuilles de saisies, mais exprimé en heures plutôt qu'en nombre de séances.
 
 Sur l'onglet "tot\_prof", on peut voir le total par semaine pour chaque module du volume qu'il y a à effectuer, en additionnant les volumes CM, TD et TP.
 Cette information est pertinente dans la mesure où il arrive qu'un module soit pris en charge en intégralité par un enseignant, et cette visualisation permet donc de s'assurer que le volume hebdomadaire reste raisonnable.
 
-Cet onglet est en deux partie.
+Cet onglet est en deux parties.
 Sur la partie supérieure est présenté le total FI+FA,
 et sur la partie inférieure on a la ventilation entre les deux formations.
 
@@ -110,9 +110,10 @@ Ces formules font appel notamment:
 \item à la fonction d'indirection ({\tt INDIRECT()}), permettant de renvoyer le contenu d'une cellule en spécifiant son adresse, 
 \item à la fonction permettant de spécifier une adresse par rapport à un numéro de ligne/colonne ({\tt ADDRESS()})
 \item aux fonctions permettant de renvoyer le numéro de ligne / de colonne de la cellule courante ({\tt ROW()}, {\tt COL()})
-
 \end{itemize}
 
+Les noms des onglets de saisie sont aussi utilisés dans les formules de l'onglet "{\tt tot\_prof}" (colonne C).
+Il ne faut donc pas les modifier sans les modifier également dans cette colonne.
 
 
 \end{document}
