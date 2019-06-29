@@ -8,7 +8,7 @@
 \usepackage{palatino}
 \usepackage[left=1.80cm, right=1.50cm,vmargin=18mm]{geometry}
 \author{Sebastien Kramm\\{\tt sebastien.kramm@univ-rouen.fr}}
-\title{Un outil de planification des enseignements}
+\title{Un outil de planification des enseignements pour un semestre d'IUT}
 
 \parskip=0.5em plus 0.1em minus 0.1em
 \parindent=0pt
@@ -17,10 +17,12 @@
 
 \maketitle
 
-\section{Presentation}
+\section{Introduction}
 
-Cette feuille de calcul a pour objectif l'aide à la planification d'un semestre, dans un contexte d'un département d'IUT, avec deux formations en parallèle (appelée ici "FI" et "FA").
-En entrée, on indique sur quelle semaine on souhaite placer les séances de CM, TD et TP.
+\subsection{Objectifs}
+
+Ce document présente l'utilisation d'un outil de type "feuille de calcul" qui a pour objectif l'aide à la planification d'un semestre, dans un contexte d'un département d'IUT ayant deux formations en parallèle (appelée ici "FI" et "FA").
+En entrée, on indique sur quelle semaine on souhaite placer les séances de CM, TD et TP, et ce pour chaque module.
 Ce document permet de planifier et visualiser de façon simple l'organisation du semestre et de répondre par exemple aux questions suivantes:
 
 \begin{itemize}
@@ -31,7 +33,9 @@ Combien de créneaux de TP ?
 \end{itemize}
 
 D'un point de vue "adaptabilité", le document est actuellement pensé pour une formation de 2 UE, avec en tout 17 modules.
-Mais il peut sans trop de difficulté être adapté à d'autres situations.
+Il peut sans trop de difficultés être adapté à d'autres situations, si les conditions suivantes sont remplies:
+Les modules d'enseignements sont désignés par une chaîne de caractères qui encode un numéro incrémental, le semestre, et l'unité d'enseignement ("UE").
+
 
 \subsection{Utilisation pratique et généralités}
 
@@ -45,7 +49,7 @@ Il ne contient aucune macro et devrait donc fonctionner sans problème avec Micr
 
 La feuille produit comme résultat:
 \begin{itemize}
-\item un histogramme montrant le volume horaire hebdomadaire résultant, pour un étudiant,
+\item un histogramme montrant le volume horaire "étudiant" hebdomadaire résultant,
 \item le volume total "étudiant" par module, avec la ventilation CM-TD-TP,
 \item le volume hebdomadaire total pour chaque module, avec la ventilation CM-TD-TP,
 \item l'écart avec le PPN.
@@ -55,65 +59,76 @@ La feuille produit comme résultat:
 
 \section{Mode d'emploi}
 
-\subsection{Travail préliminaire}
-\begin{itemize}
-\item Dans l'onglet "static", indiquer le semestre concerné, à coté de la cellule SEM
-\item Dans l'onglet "static", indiquer les semaines concernées dans la colonne "semaines".
-On ne met ici que les semaines effectives, c'est à dire hors semaines de congé.
+\subsection{Travail préliminaire: configuration}
 
-\item Dans l'onglet {\tt vol\_PPN}, donner sur les 3 colonnes et pour chaque module le volume prévu par le PPN
+\begin{itemize}
+\item Dans l'onglet {\tt static}:
+\begin{itemize}
+\item indiquer le semestre concerné, à coté de la cellule SEM.
+Ceci va adapter la génération des codes-modules.
+\item indiquer les semaines concernées dans la colonne "semaines" (la feuille est prévue pour un semestre jusqu'à 17 semaines, mais en utiliser moins ne pose aucun problème).
+On ne met ici que les semaines effectives, c'est à dire hors semaines de congé.
+\item indiquer le  nombre des semaines d'enseignement, pour chaque formation (FI et FA) dans les cases {\tt NB\_SEM\_FI} et {\tt NB\_SEM\_FA}.
+Ceci servira à déterminer le volume horaire moyen sur l'onglet {\tt Totaux}.
 \end{itemize}
 
-Eventuellement, on peut aussi "griser" les semaines où les FA sont absents dans l'onglet "FA", ce façon à les rendre plus visible.
 
-De même, on peut renseigner dans l'onglet "Totaux" le nombre de jours effectifs de chaque semaine, ce qui permet de calculer sur cette feuille le volume horaire moyen des étudiants pour chaque semaine.
+\item Dans l'onglet {\tt vol\_PPN}, donner sur les 3 colonnes et pour chaque module le volume horaire prévu par le PPN.
+\end{itemize}
+
+Eventuellement, on peut aussi "griser" dans l'onglet {\tt FA} les semaines où les FA sont absents, de façon à les rendre plus visible.
+
+De même, on peut renseigner dans l'onglet {\tt Totaux} le nombre de jours effectifs de chaque semaine, ce qui permet de calculer sur cette feuille le volume horaire moyen des étudiants pour chaque semaine.
 
 
 \subsection{Saisie des données}
 
 Le document dispose de deux onglets, "FI" et "FA", correspondant aux deux formations gérées.
 
-D'abord, il faut définir pour chaque enseignement et chaque module (chaque ligne du tableau) le volume horaire que l'on souhaite placer.
+D'abord, il faut définir pour chaque enseignement et chaque module (chaque ligne du tableau) le volume horaire que l'on souhaite placer, dans la colonne "E".
 En effet, dans chaque département, on peut souhaiter "pousser" un peu plus tel volume par rapport un autre, par rapport au volume prévu au PPN.
-
-La feuille de saisie montre sur chaque ligne le volume "PPN", permettant de remplir à coté la cellule "colume prévu" en fonction de ce que l'on souhaite.
-Pour les FA, le volume affiché pour le PPN est réduit en fonction du coefficient que l'on a indiqué dans l'onglet "static"
+La feuille de saisie montre à gauche sur chaque ligne le volume "PPN", permettant de remplir à coté la cellule "volume prévu" en fonction de ce que l'on souhaite.
+Pour les FA, le volume affiché pour le PPN est réduit en fonction du coefficient que l'on a indiqué dans l'onglet {\tt static}
 (voir {\tt COEFF\_FA}).
 Il est à 0,8 par défaut.
 
-Ensuite, pour chaque module, on indique dans l'onglet "FI" et "FA" les séances CM-TD-TP dans le tableau, sur la semaine où l'on souhaite les placer, exprimé en nombre de séances.
-
-%Attention, la durée d'une séance est identique, que ce soit CM, TD ou TP.
-%Si on veut des TP de 1h30, on met donc "1", pour des TP de 3h, il faudra noter "2".
+Ensuite, pour chaque module, on indique dans les deux onglets {\tt FI} et {\tt FA} les séances CM-TD-TP dans le tableau, sur la semaine où l'on souhaite les placer, exprimé en nombre de séances.
 
 Pour le coté pratique, lors de la saisie des données, on pourra avantageusement "filter" l'affichage via le filtre prévu sur la colonne "UE".
 
 \subsection{Présentation des résultats}
 
-Sur l'onglet "tot\_mod", on peut voir le bilan du volume placé par étudiant, pour chaque module, ventilé par CM-TD-TP.
+L'onglet {\tt totaux} totalise pour chaque semaine le volume CM, TD et TP par étudiant, et ce pour chaque formation.
+Il montre aussi un histogramme de cette répartition en fonction des semaines.
+
+Sur l'onglet {\tt tot\_mod}, on peut voir le bilan du volume placé par étudiant, pour chaque module, ventilé par CM-TD-TP.
 Ceci correspond à la colonne "TOTAL" des feuilles de saisies, mais exprimé en heures plutôt qu'en nombre de séances.
 
-Sur l'onglet "tot\_prof", on peut voir le total par semaine pour chaque module du volume qu'il y a à effectuer, en additionnant les volumes CM, TD et TP.
+Sur l'onglet {\tt tot\_prof}, on peut voir le total par semaine et pour chaque module du volume qu'il y a à effectuer, en additionnant les volumes CM, TD et TP.
 Cette information est pertinente dans la mesure où il arrive qu'un module soit pris en charge en intégralité par un enseignant, et cette visualisation permet donc de s'assurer que le volume hebdomadaire reste raisonnable.
 
 Cet onglet est en deux parties.
 Sur la partie supérieure est présenté le total FI+FA,
 et sur la partie inférieure on a la ventilation entre les deux formations.
 
+Les totaux sur cet onglet correspondent au total des heures présentielles à effectuer avec cette planification (par opposition au volume par étudiant, qui est présenté sur les onglets {\tt tot\_mod} et {\tt Totaux}).
 
 \section{Détails techniques}
 
-Le premier onglet ("FI") contient beaucoup de formules dont le résultat est ensuite référencé ailleurs.
+Le premier onglet ({\tt FI}) contient beaucoup de formules dont le résultat est ensuite référencé ailleurs.
 Par exemple, les volumes PPN, les codes-module, les numéros de semaines, etc.
 Ces formules font appel notamment:
 \begin{itemize}
-\item à la fonction d'indirection ({\tt INDIRECT()}), permettant de renvoyer le contenu d'une cellule en spécifiant son adresse, 
-\item à la fonction permettant de spécifier une adresse par rapport à un numéro de ligne/colonne ({\tt ADDRESS()})
-\item aux fonctions permettant de renvoyer le numéro de ligne / de colonne de la cellule courante ({\tt ROW()}, {\tt COL()})
+\item à la fonction d'indirection ({\tt INDIRECT()}), permettant de renvoyer le contenu d'une cellule en spécifiant son adresse;
+\item à la fonction permettant de spécifier une adresse par rapport à un numéro de ligne/colonne ({\tt ADDRESS()}), et qui peut lui-même être le résultat d'un calcul;
+\item aux fonctions permettant de renvoyer le numéro de ligne / de colonne de la cellule courante ({\tt ROW()}, {\tt COL()}).
 \end{itemize}
 
-Les noms des onglets de saisie sont aussi utilisés dans les formules de l'onglet "{\tt tot\_prof}" (colonne C).
+Les noms des onglets de saisie sont aussi utilisés dans les formules de l'onglet {\tt tot\_prof} (colonne C).
 Il ne faut donc pas les modifier sans les modifier également dans cette colonne.
 
+\subsection{Adaptation}
+
+Si la chaîne de caractère codant le module est organisée différement de celle proposée, alors il faut éditer la formule en F2 sur l'onglet {\tt static}, puis la recopier iterativement sur les cellules en dessous.
 
 \end{document}
