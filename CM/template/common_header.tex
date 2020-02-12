@@ -1,0 +1,125 @@
+
+\setbeamersize{text margin left=5mm}
+\setbeamersize{text margin right=5mm}
+
+\usepackage[french]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{fancybox}
+\usepackage{pifont}
+%\usepackage{enumitem}
+
+% added on 2011-04-04
+\usepackage{ifpdf}
+%\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=[rgb]{0.1,0,0.2},urlcolor=[rgb]{0.2,0,0.7}}
+
+
+%\usepackage{subfigure}
+
+%****************************************
+% To place stuff on slide
+%\usepackage[showboxes]{textpos}
+\usepackage[absolute, overlay]{textpos}
+\setlength{\TPHorizModule}{10mm}
+\setlength{\TPVertModule}{\TPHorizModule}
+\textblockorigin{0mm}{0mm} % start everything near the top-left corner
+%****************************************
+
+% extensions du mode verbatim, voir http://www.mackichan.com/index.html?techtalk/458.htm
+%\usepackage{alltt}
+
+
+\usepackage{listings}
+
+% definitions for 9s12 assembler, by Mickael Grisel
+\lstdefinelanguage{Assembleur}
+{morekeywords={equ,org,fcb,ABA,ABX,ABY,ADCA,ADCB,ADDA,ADDB,ADDD,ANDA,ANDB,ANDCC,ASL,ASLA,ASLB,ASLD,ASR,ASRA,ASRB,BCC,BCLR,BCS,BEQ,BGE,BGND,BGT,BHI,BHS,BITA,BITB,BLE,BLO,BLS,BLT,BMI,BNE,BPL,BRA,BRCLR,BRN,BRSET,BSET,BSR,BVC,BVS,CALL,CBA,CLC,CLI,CLR,CLRA,CLRB,CLV,CMPA,CMPB,COM,COMA,COMB,CPD,CPS,CPX,CPY,DAA,DBEQ,DBNE,DEC,DECA,DECB,DES,DEX,DEY,EDIV,EDIVS,EMACS,EMAXD,EMAXM,EMIND,EMINM,EMUL,EMULS,EORA,EORB,ETBL,EXG,FDIV,IBEQ,IBNE,IDIV,IDIVS,INC,INCA,INCB,INS,INX,INY,JMP,JSR,LBCC,LBCS,LBEQ,LBGE,LBGT,LBHI,LBHS,LBLE,LBLO,LBLS,LBLT,LBMI,LBNE,LBPL,LBRA,LBRN,LBVC,LBVS,LDAA,LDAB,LDD,LDS,LDX,LDY,LEAS,LEAX,LEAY,LSL,LSLA,LSLB,LSLD,LSR,LSRA,LSRB,LSRD,MAXA,MAXM,MEM,MINA,MINM,MOVB,MOVW,MUL,NEG,NEGA,NEGB,NOP,ORAA,ORAB,ORCC,PSHA,PSHB,PSHC,PSHD,PSHX,PSHY,PULA,PULB,PULC,PULD,PULX,PULY,REV,REVW,ROL,ROLA,ROLB,ROR,RORA,RORB,RTC,RTI,RTS,SBA,SBCA,SBCB,SEC,SEI,SEV,SEX,STAA,STAB,STD,STOP,STS,STX,STY,SUBA,SUBB,SUBD,SWI,TAB,TAP,TBA,TBEQ,TBL,TBNE,TFR,TPA,TRAP,TST,TSTA,TSTB,TSX,TSY,TXS,TYS,WAI,WAV,XGDX,XGDY},
+sensitive=false,
+morecomment=[l]{;}
+}
+
+
+\lstset{ % general style for listings
+   numbers=none
+   , language=XML
+   , showlines=false
+   , showstringspaces=false
+   , keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1}
+   , identifierstyle=\ttfamily
+   , tabsize=2
+   , frame=single
+   , breaklines=true
+   , basicstyle=\tt \scriptsize
+   , numberstyle=\tiny \ttfamily
+   , framexleftmargin=2mm
+   , backgroundcolor=\color{white}
+   , xleftmargin=2mm
+   %, frameround={tttt}
+   , captionpos=b
+}
+
+
+% reduces depth of TOC to 'section' and 'subsection' only
+\setcounter{tocdepth}{2}
+
+\setbeamertemplate{navigation symbols}{}
+
+% chose only one of these two:
+%\setbeamercovered{transparent}
+\setbeamercovered{invisible}
+
+
+\AtBeginSection[] % to add a summary at beginning of each section
+{ %
+%\begin{frame}<beamer>
+\begin{frame}
+\frametitle{Sommaire} 
+\tableofcontents[currentsection] 
+\end{frame} }
+
+\AtBeginSubsection[] % to add a summary at beginning of each subsection
+{ \begin{frame}
+%{ \begin{frame}<beamer>
+%{ \begin{frame}
+\frametitle{Sommaire} 
+\tableofcontents[currentsection,currentsubsection] 
+\end{frame} }
+
+
+\ifpdf
+\hypersetup{
+	pdfauthor={S. Kramm, IUT Rouen},
+	pdfsubject={module RCPI01},
+	bookmarksdepth=3
+%	pdftitle={titre du pdf},
+}
+\fi
+
+\hypersetup{bookmarksdepth=3}
+
+\author[S. Kramm]{{\tt Sebastien.Kramm@univ-rouen.fr}}
+%\institute[LITIS]{LITIS - INSA Rouen}
+
+\logo{\includegraphics[width=15mm]{../logo_univ_rouen_500.png}}% my logo on each slide
+
+%\logo{\includegraphics[width=15mm]{../logo_litis_bleu_blanc.jpg}}% my logo on each slide
+
+%\subtitle{Module Info 2}
+
+\graphicspath{{../src/}}
+
+\institute[IUT R\&T Rouen]{IUT R\&T Rouen}
+\date{2018-2019}
+\subtitle{Module RCPI01}
+
+\usepackage{fourier} % pour \danger
+
+\renewcommand\UrlFont{\color[rgb]{0.6,0.0,0.9}\ttfamily\small}
+\newcommand{\btt}{\bfseries \ttfamily } 
+
+%\begin{document}
+
