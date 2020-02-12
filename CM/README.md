@@ -1,17 +1,22 @@
-# Framework de compilation Latex pour des slides Beamer
- Sebastien Kramm - 2020
- LITIS
+# CM Framework
+
+* What is this: it is a Framework to build Beamer slides in different format from a single Latex source file
+* author: Sebastien Kramm - 2020
+* licence: WTFPL
+* what's that name: *CM* means *Cours Magistral* in french
 
 ## How does this work:
 
-* run `make`
 
-(or `make` -j4 to make things faster)
-
+ 1. Edit your LaTeX source files in the `src` folder
+ 2. run `make`<br>
+(or `make -j4` to make things faster)
+ 3. Check out your output pdf files in the `out` folder
+ 
 `make clean` will... well, clean!
-	
 
-Folder description:
+
+## Folder description:
 
 * `src`: your source files
 * `out`: folder where the output pdf files will be generated
