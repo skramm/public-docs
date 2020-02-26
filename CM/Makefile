@@ -32,12 +32,12 @@ show:
 build/%_B.texg: src/%.$(FILE_EXT) template/head_beamer.tex template/common_header.tex
 #	@echo " - building file $@ from $<"
 	@cat template/head_beamer.tex template/common_header.tex $< > $(basename $(@)).texg
-	@ echo "\end{document}" >> $(basename $(@)).texg
+	@echo "\end{document}" >> $(basename $(@)).texg
 
 build/%_H.texg: src/%.$(FILE_EXT) template/head_handout1.tex template/common_header.tex
 #	@echo " - building file $@ from $<"
 	@cat template/head_handout1.tex template/common_header.tex $< > $(basename $(@)).texg
-	@ echo "\end{document}" >> $(basename $(@)).texg
+	@echo "\end{document}" >> $(basename $(@)).texg
 
 build/%_P.texg: src/%.$(FILE_EXT) template/head_handout4.tex template/common_header.tex
 #	@echo " - building file $@ from $<"
