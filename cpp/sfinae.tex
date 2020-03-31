@@ -1,0 +1,140 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+
+
+\lstset{
+	language=C++
+	,showlines=true
+	,showstringspaces=true
+	,tabsize=2
+	,frame=single
+	,breaklines=true
+	,framexleftmargin=2mm
+	,backgroundcolor=\color{white}
+	,xleftmargin=2mm
+	%, frameround={tttt}
+	,captionpos=b
+	,basicstyle=\tt \scriptsize
+	,keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1}
+	,numberstyle=\scriptsize,
+	,identifierstyle=\ttfamily
+	,commentstyle=\color[rgb]{0.133,0.545,0.133}
+	,stringstyle=\ttfamily\color[rgb]{0.627,0.126,0.941}
+	,showstringspaces=false
+	,numbers=none
+%	numbers=left,
+	,stepnumber=1
+	,numbersep=10pt
+	,tabsize=4
+	,breaklines=true
+	,breakatwhitespace=false
+	columns=flexible
+%	upquote=true,
+	extendedchars=true
+	,xleftmargin=0pt
+	,language=bash
+   ,frame=single
+}
+
+
+
+\usepackage[left=2.00cm, right=1.50cm]{geometry}
+\author{S. Kramm}
+\title{Sfinae notes}
+\date{\today}
+\begin{document}
+\maketitle
+
+reference: \url{https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error}
+
+
+\url{https://eli.thegreenplace.net/2014/sfinae-and-enable_if/}
+
+
+
+Exemple 1: fonction qui renvoie un type dépendant du type en template
+
+\begin{lstlisting}
+
+template<typename T>
+typename std::enable_if<
+   ( std::is_same<T, int>::value ||
+    std::is_same<T, char>::value ),
+    T>::type
+myFunc(T data)
+{
+	std::cout << "myFunc() data=" << data << "\n";
+	return data+1;
+}
+
+int main()
+{
+    std::cout << myFunc( 42 );  // ok, affiche 43
+    std::cout << myFunc( 'a' );  // ok, affiche 'b'
+    std::cout << myFunc( 3.14 );  // Erreur !        
+}
+
+\end{lstlisting}
+
+
+
+Exemple 2: fonction avec un argument
+
+\begin{lstlisting}
+#include <iostream>
+
+struct A
+{
+    int a;
+    A() { a=42; }
+};
+
+// for A& or const A&
+template<
+	typename T,
+	typename std::enable_if<
+		(std::is_same<T,A>::value || std::is_same<T,const A>::value),T
+	>::type* = nullptr
+> 
+A&
+func ( A& a1, T& a2 )
+{
+    std::cout << "template 1\n";
+    return a1;
+}
+
+// for all other types
+
+template<
+	typename T,
+	typename std::enable_if<
+		(!std::is_same<T,A>::value & !std::is_same<T,const A>::value),T
+	>::type* = nullptr
+> 
+A&
+func ( A& a1, T a2 )
+{
+    std::cout << "template 2 a2=" << a2 << "\n";
+    return a1;
+}
+ 
+int main()
+{
+    A a1,a2;
+    A a3 = func(a1,a2);
+    A a4 = func(a1,3);
+}
+\end{lstlisting}
+
+
+
+
+
+\end{document}
