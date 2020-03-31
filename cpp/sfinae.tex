@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,landscape,twocolumn]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -52,22 +52,31 @@
 \begin{document}
 \maketitle
 
-reference: \url{https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error}
+\section{Introduction}
+
+Le SFINAE associé à {\tt enable\_if} est un mécanisme permettant de générer  ou pas certains types et certaines fonctions en fonction d'un type donné en argument.
+
+\begin{lstlisting}
+template< bool B, class T = void >
+struct enable_if;
+\end{lstlisting}
+
+Principe:
+{\em if B is true, {\tt std::enable\_if} has a public member typedef type, equal to T; otherwise, there is no member typedef. }
+
+Si B est "true" (obtenu par exemple par {\tt std::is\_same<T,int>::value}, qui sera "true" pour T=int), alors le type fournit un typedef {\tt type}, qui sera égale à {\tt T}.
 
 
-\url{https://eli.thegreenplace.net/2014/sfinae-and-enable_if/}
-
+\section{Exemples complets}
 
 
 Exemple 1: fonction qui renvoie un type dépendant du type en template
 
 \begin{lstlisting}
-
 template<typename T>
 typename std::enable_if<
-   ( std::is_same<T, int>::value ||
-    std::is_same<T, char>::value ),
-    T>::type
+	( std::is_same<T, int>::value || std::is_same<T, char>::value ), T
+	>::type
 myFunc(T data)
 {
 	std::cout << "myFunc() data=" << data << "\n";
@@ -80,7 +89,6 @@ int main()
     std::cout << myFunc( 'a' );  // ok, affiche 'b'
     std::cout << myFunc( 3.14 );  // Erreur !        
 }
-
 \end{lstlisting}
 
 
@@ -88,8 +96,6 @@ int main()
 Exemple 2: fonction avec un argument
 
 \begin{lstlisting}
-#include <iostream>
-
 struct A
 {
     int a;
@@ -134,7 +140,205 @@ int main()
 \end{lstlisting}
 
 
+\section{Stream operators and constness}
 
+Say you have some type
+\begin{lstlisting}
+struct A
+{
+	A( int v) : val(v) {}
+	int val=42;
+};
+\end{lstlisting}
+
+And you want a stream operator, so you can print it out.
+There you go:
+
+\begin{lstlisting}
+A& operator( std::ostream& f, const A& a)
+{
+	f << a.val;
+};
+\end{lstlisting}
+
+Of course, you need to declare it as friend in the class:
+\begin{lstlisting}
+struct A
+{
+	friend A& operator( std::ostream&, const A& );
+	A( int v) : val(v) {}
+	int val=42;
+};
+\end{lstlisting}
+
+But lets say that when streaming it, you also need to edit its value, say increment it by one.
+With the above implementation, you can't: the argument is {\tt const}.
+
+So you need another implementation:
+\begin{lstlisting}
+A& operator( std::ostream& f, A& a )
+{
+	f << a.val++;
+};
+\end{lstlisting}
+
+The class becomes:
+\begin{lstlisting}
+struct A
+{
+	A( int v) : val(v) {}
+	friend A& operator( std::ostream&, const A& );
+	friend A& operator( std::ostream&, A& );
+	int val=42;
+};
+\end{lstlisting}
+
+But then, one may wonder if the first one really needed ?
+The answer is yes, because if we remove it, the code below would be illegal:
+\begin{lstlisting}
+	std::cout << A(123);
+\end{lstlisting}
+
+
+\section{Factorization}
+
+Say I have two overloads on the same function, one for const arguments, the other for non const.
+\begin{lstlisting}
+A& foo( A& a )
+{
+// ...
+}
+A& foo( const A& a )
+{
+// ...
+}
+\end{lstlisting}
+
+These two functions can be called from user code, or from a "bar library function, thats therefore needs to be duplicated:
+\begin{lstlisting}
+A& bar( A& a )
+{
+//    code 1
+// ......
+	return foo( a )
+}
+
+A& bar( const A& a )
+{
+//    code 1
+// ......
+	return foo( a )
+}
+\end{lstlisting}
+
+Now the part in "code 1" is actually the same, and code duplicating is bad.
+So you can factorize that in some helper function, so I can directy write:
+\begin{lstlisting}
+#include <type_traits>
+#include <iostream>
+
+struct A
+{
+    int val;
+    A() { val=42; }
+};
+
+void foo( A& a )
+{
+    std::cout << "foo( A& a )\n";
+    a.val++;
+}
+void foo( const A& a )
+{
+    std::cout << "foo( const A& a )\n";
+}
+
+template<typename T>
+void helper_func( T& a )
+{
+    std::cout << "helper, is_const=" << std::is_const<T>::value << "\n";
+	foo(a);
+}
+
+void bar( A& a1 )
+{
+	helper_func( a1 );
+}
+void bar(  const A& a1 )
+{
+	helper_func( a1 );
+}
+ 
+int main()
+{
+    A a1;
+    const A a2;
+    bar(a1);
+    bar(a2);
+}
+\end{lstlisting}
+
+This will print:
+\begin{lstlisting}
+helper, is_const=0
+foo( A& a )
+helper, is_const=1
+foo( const A& a )
+\end{lstlisting}
+
+Version avec 2 arguments:
+
+\begin{lstlisting}
+void foo( A& a1, A& a2 )
+{
+    std::cout << "foo( A& a )\n";
+    a2.val++;
+}
+void foo( A& a1, const A& a2 )
+{
+    std::cout << "foo( const A& a )\n";
+}
+
+template<typename T1, typename T2>
+void helper_func( T1& a1, T2& a2  )
+{
+    std::cout << "helper, T2 is_const=" << std::is_const<T2>::value << "\n";
+	foo( a1, a2 );
+}
+
+void bar( A& a1, A& a2 )
+{
+	helper_func( a1, a2 );
+}
+
+void bar( A& a1, const A& a2 )
+{
+	helper_func( a1, a2 );
+}
+ 
+int main()
+{
+    A a1, a_noconst;
+    const A a_const;
+    bar( a1, a_noconst );
+    bar( a1, a_const );
+}
+\end{lstlisting}
+
+With returned argument:
+
+
+
+\section{References}
+
+
+references:
+\begin{itemize}
+\item \url{https://en.cppreference.com/w/cpp/types/enable_if}
+\item \url{https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error}
+\item \url{https://eli.thegreenplace.net/2014/sfinae-and-enable_if/}
+\item \url{https://riptutorial.com/cplusplus/example/3777/enable-if}
+\end{itemize}
 
 
 \end{document}
