@@ -9,6 +9,13 @@
 \usepackage{hyperref}
 
 
+
+% ligne de séparation entre les colonnes
+\setlength{\columnseprule}{0.4pt}
+
+% espace inter-colonnes
+\setlength{\columnsep}{20pt}
+
 \lstset{
 	language=C++
 	,showlines=true
@@ -54,7 +61,13 @@
 
 \section{Introduction}
 
-Le SFINAE associé à {\tt enable\_if} est un mécanisme permettant de générer  ou pas certains types et certaines fonctions en fonction d'un type donné en argument.
+
+
+\section{En pratique: associé a enable\_if}
+
+Principe: {\tt enable\_if<condition, T>::type} sera équivalent à {\tt T} si condition est vraie.
+Sinon, cela donnera une construction invalide et la fonction sera rejetée du jeu de d'overload, {\bf sans génération d'erreur}.
+
 
 \begin{lstlisting}
 template< bool B, class T = void >
