@@ -1,14 +1,18 @@
 
 SRC_FILES = $(wildcard *.cpp)
-EXE_FILES = $(patsubst %.cpp,%,$(SRC_FILES))
+EXE_FILES = $(patsubst %.cpp,build/%,$(SRC_FILES))
+
+CFLAGS+=-std=c++11
 
 all: $(EXE_FILES)
 	@echo "done"
 
-%:%.cpp
+build/%.cpp:%.cpp
 	mkdir -p build
-	cat common.hpp > build/$<
-	cat $< >> build/$<
-	cd build; $(CXX) $< -o $@
-	cd build; rm $<
+	cat common.hpp > $@
+	cat $< >> $@
+
+build/%:build/%.cpp
+	$(CXX) $(CFLAGS) $< -o $@
+#	cd build; rm $<
 

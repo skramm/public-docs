@@ -1,6 +1,3 @@
-
-//#include "common.hpp"
-
 template<typename T>
 typename std::enable_if<
 	std::is_same<T, int>::value, T
@@ -14,6 +11,10 @@ myFunc( T data )
 int main()
 {
 	std::cout << myFunc( 42 );  // ok, affiche 43
+
+	const int a = 43;
+	std::cout << myFunc( a );  // ok, affiche 44
+
 //	std::cout << myFunc( 'a' );  // Erreur !
 //	std::cout << myFunc( 3.14 );  // Erreur !
 }

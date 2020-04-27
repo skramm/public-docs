@@ -1,7 +1,4 @@
 
-
-//#include "common.hpp"
-
 // un type
 struct Int
 {
@@ -10,25 +7,26 @@ struct Int
 	using value_type = int;
 };
 
-int
-negate( int i )
+void
+foo( int i )
 {
-	std::cout << "i=" << i << "\n";
-	return 2*i;
+	std::cout << "foo(int)\n";
 }
 
-/*template <typename T>
-typename T::value_type
-negate(const T& t)
+template <typename T>
+void
+foo(const T& t)
 {
-	return 2*t;
-}*/
+	typename T::value_type vt;
+	std::cout << "foo(T)\n";
+}
 
 int main()
 {
 	int a=42;
-	std::cout << negate(a) << "\n";
-//	Int b=42;
-//	std::cout << negate(b) << "\n";
+	foo( a );
+
+	Int b=42;
+	foo( b );
 }
 

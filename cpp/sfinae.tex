@@ -59,14 +59,44 @@
 \begin{document}
 \maketitle
 
+
+\section{Rappels: templates}
+
+On peut définir un gabarit (on utilisera ci-après le terme de template) de fonction
+
+\begin{lstlisting}
+template<typename T>
+void foo( T t );
+\end{lstlisting}
+
+On pourra alors utiliser cette fonction pour différent types:
+\begin{lstlisting}
+foo( 42 );
+foo( 3.14 );
+foo( Machin() ); // appel d'un constructeur
+\end{lstlisting}
+
+
+
+
+
 \section{Introduction}
 
 
 
 \section{En pratique: associé a enable\_if}
 
-Principe: {\tt enable\_if<condition, T>::type} sera équivalent à {\tt T} si condition est vraie.
+Principe: \fbox{\tt std::enable\_if<condition, T>::type} sera équivalent à \fbox{\tt T} si condition est vraie.
 Sinon, cela donnera une construction invalide et la fonction sera rejetée du jeu de d'overload, {\bf sans génération d'erreur}.
+
+Par exemple, ceci:
+\begin{lstlisting}
+std::enable_if<condition, int>::type foo();
+\end{lstlisting}
+Si "condition" est vrai, alors ce sera équivalent à ceci:
+\begin{lstlisting}
+int foo();
+\end{lstlisting}
 
 
 \begin{lstlisting}

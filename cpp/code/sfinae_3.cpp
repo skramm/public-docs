@@ -1,6 +1,3 @@
-
-//#include "common.hpp"
-
 template<typename T>
 typename std::enable_if<
 	( std::is_same<T, int>::value || std::is_same<T, char>::value ), T
