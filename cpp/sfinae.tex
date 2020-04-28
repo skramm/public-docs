@@ -1,4 +1,6 @@
-\documentclass[11pt,a4paper,landscape,twocolumn]{article}
+%\documentclass[11pt,a4paper,landscape,twocolumn]{article}
+\documentclass[11pt,a4paper]{article}
+
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -182,8 +184,9 @@ int main()
 }
 \end{lstlisting}
 
+\section{Cas pratiques}
 
-\section{Stream operators and constness}
+\subsection{Stream operators and constness}
 
 Say you have some type
 \begin{lstlisting}
@@ -243,83 +246,64 @@ The answer is yes, because if we remove it, the code below would be illegal:
 \end{lstlisting}
 
 
-\section{Factorization}
+\subsection{Factorization}
+\label{ssec:facto1}
 
-Say I have two overloads on the same function, one for const arguments, the other for non const.
+Supposons qu'on aie deux surcharges d'une fonction avec la même signature, la seule différence étant que l'argument de l'une d'entre elle est "const".
+Le code des deux fonctions peut-être différent.
+%Say I have two overloads on the same function, one for const arguments, the other for non const.
 \begin{lstlisting}
-A& foo( A& a )
-{
-// ...
-}
-A& foo( const A& a )
-{
-// ...
-}
-\end{lstlisting}
-
-These two functions can be called from user code, or from a "bar library function, thats therefore needs to be duplicated:
-\begin{lstlisting}
-A& bar( A& a )
-{
-//    code 1
-// ......
-	return foo( a )
-}
-
-A& bar( const A& a )
-{
-//    code 1
-// ......
-	return foo( a )
-}
-\end{lstlisting}
-
-Now the part in "code 1" is actually the same, and code duplicating is bad.
-So you can factorize that in some helper function, so I can directy write:
-\begin{lstlisting}
-#include <type_traits>
-#include <iostream>
-
-struct A
-{
-    int val;
-    A() { val=42; }
-};
-
 void foo( A& a )
 {
-    std::cout << "foo( A& a )\n";
-    a.val++;
+	// ...
+	a.doSomething();
 }
 void foo( const A& a )
 {
-    std::cout << "foo( const A& a )\n";
-}
-
-template<typename T>
-void helper_func( T& a )
-{
-    std::cout << "helper, is_const=" << std::is_const<T>::value << "\n";
-	foo(a);
-}
-
-void bar( A& a1 )
-{
-	helper_func( a1 );
-}
-void bar(  const A& a1 )
-{
-	helper_func( a1 );
-}
- 
-int main()
-{
-    A a1;
-    const A a2;
-    bar(a1);
-    bar(a2);
+	// ...
 }
 \end{lstlisting}
+
+Ces deux fonction peuvent être appelée directement depuis un code utilisateur, ou depuis une autre fonction "bar()", avec la même signature.
+Cette dernière fonction devrait - a priori - donc être dupliquée également:
+%These two functions can be called from user code, or from a "bar library function, thats therefore needs to be duplicated:
+\begin{lstlisting}
+void bar( A& a )
+{
+//    code 1
+// ......
+	foo( a )
+}
+
+void bar( const A& a )
+{
+//    code 1
+// ......
+	foo( a )
+}
+\end{lstlisting}
+
+Si maintenant on se rend compte que la partie dans "code 1" est identique, on voit que l'on fait de la "réplication de code", ce qui est en général mauvais signe.
+Comment factoriser et éviter cette réplication?
+Il suffit simplement de transformer les deux fonction "bar()" en un template de fonction, qui sera instancié en deux versions, une pour un argument "const", et l'autre pour un argument "non-const", et qui appelera la fonction "foo()":
+
+%Now the part in "code 1" is actually the same, and code duplicating is bad.
+%So you can factorize that in some helper function, so I can directy write:
+
+\begin{lstlisting}
+template<typename T>
+void bar( T& a )
+{
+    std::cout << "bar(), is_const=" << std::is_const<T>::value << "\n";
+//    code 1    
+	foo(a);
+}
+\end{lstlisting}
+
+Le code complet est visible en \ref{lst:lst03}.
+
+\lstinputlisting[float,caption={voir section \ref{ssec:facto1}},label=lst:lst03]{code/sfinae_03.cpp}
+
 
 This will print:
 \begin{lstlisting}
