@@ -10,6 +10,8 @@
 \usepackage{listings}
 \usepackage{hyperref}
 
+\usepackage{palatino}
+
 
 
 % ligne de séparation entre les colonnes
@@ -52,15 +54,26 @@
    ,frame=single
 }
 
+%\usepackage{draftwatermark}
+%\SetWatermarkColor{gray!20}
+%\SetWatermarkFontSize{1cm}
+%\SetWatermarkText{Version préliminaire !}
+%\SetWatermarkScale{2}
 
+\usepackage[printwatermark]{xwatermark}
+\newwatermark*[allpages,color=red!20,angle=45,scale=2,xpos=0,ypos=0]{Version préliminaire !}
 
 \usepackage[left=2.00cm, right=1.50cm]{geometry}
 \author{S. Kramm}
-\title{Sfinae notes}
+\title{C++ Techniques avancées}
 \date{\today}
 \begin{document}
 \maketitle
 
+\begin{abstract}
+Ce document présente quelques techniques avancées de C++.
+Il utilise principalement les avancées permises par C++11.
+\end{abstract}
 
 \section{Rappels: templates}
 
@@ -355,6 +368,129 @@ int main()
 With returned argument:
 
 
+\section{Tag dispatching}
+
+La technique du {\em tag dispatching}
+permet d'implémenter un comportement différent en fonction du type de données à manipuler.
+Le principe est d'offrir dans l'API une fonction d'interface, qui ne va que "dispatcher" à des sous-fonctions.
+La sélection se fera de façon automatique lors de la compilation en fonction du type de l'argument.
+Cette sélection est basée sur le principe de surcharge de fonction:
+les sous-fonctions auront dans leur signature un argument supplémentaire "muet" permettant au compilateur de faire la sélection.
+Par exemple:
+
+\begin{lstlisting}
+template<typename T>
+void foo( T t )
+{
+	impl_foo( t, /* ici un type deduit de T */  )
+}
+
+template<typename T>
+void impl_foo( T t, int )
+{
+	// code pour int
+}
+
+template<typename T>
+void impl_foo( T t, float )
+{
+	// code pour float
+}
+\end{lstlisting}
+
+
+Pour bien clarifier l'intention, on introduit une couche de séparation de ces fonctions.
+S'il s'agit de fonctions libre, on les place dans un espace de nom distinct:
+\begin{lstlisting}
+template<typename T>
+void foo( T t )
+{
+	detail::impl_foo( t, /* ici un type deduit de T */  )
+}
+
+namespace detail {
+	template<typename T>
+	void impl_foo( T t, int )
+	{
+		// code pour int
+	}
+	
+	template<typename T>
+	void impl_foo( T t, float )
+	{
+		// code pour float
+	}
+}
+\end{lstlisting}
+
+S'il s'agit de fonctions membre de classe, alors on les mets dans la partie "private":
+
+\begin{lstlisting}
+struct MyClass
+{
+	public:
+		template<typename T>
+		void foo( T t )
+		{
+			impl_foo( t, /* ici un type deduit de T */  )
+		}
+	private:
+		template<typename T>
+		void impl_foo( T t, int )
+		{
+			// code pour int
+		}
+		
+		template<typename T>
+		void impl_foo( T t, float )
+		{
+			// code pour float
+		}
+};
+\end{lstlisting}
+
+
+L'aspect "tag" vient de ce que l'on prévoit des types vides qui ne serviront que d'identifiant:
+\begin{lstlisting}
+struct Type_A {};
+struct Type_B {};
+\end{lstlisting}
+
+Le dispatch se fera via une classe "helper" (on omet ici ):
+\begin{lstlisting}
+template<typename T>
+struct Helper {};
+
+template<typename T>
+void foo( T t )
+{
+	detail::impl_foo( t, Helper<T> )
+}
+
+template<typename T>
+void impl_foo( T t, Helper<Type_A> )
+{
+	// code pour le type A
+}
+template<typename T>
+void impl_foo( T t, Helper<Type_B> )
+{
+	// code pour le type T = B
+}
+\end{lstlisting}
+
+
+
+
+A DEVELOPPER
+
+ref:
+\begin{itemize}
+\item \url{https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Tag_Dispatching}
+\item \url{https://www.fluentcpp.com/2018/04/27/tag-dispatching/}
+\end{itemize}
+
+\section{AAAA}
 
 \section{References}
 
