@@ -13,7 +13,6 @@
 \usepackage{palatino}
 
 
-
 % ligne de séparation entre les colonnes
 \setlength{\columnseprule}{0.4pt}
 
@@ -61,7 +60,7 @@
 %\SetWatermarkScale{2}
 
 \usepackage[printwatermark]{xwatermark}
-\newwatermark*[allpages,color=red!20,angle=45,scale=2,xpos=0,ypos=0]{Version préliminaire !}
+%\newwatermark*[allpages,color=red!10,angle=45,scale=2,xpos=0,ypos=0]{Version préliminaire !}
 
 \usepackage[left=2.00cm, right=1.50cm]{geometry}
 \author{S. Kramm}
@@ -77,7 +76,7 @@ Il utilise principalement les avancées permises par C++11.
 
 \section{Rappels: templates}
 
-On peut définir un gabarit (on utilisera ci-après le terme de template) de fonction
+On peut définir un gabarit (on utilisera ci-après le terme de {\em template}) de fonction ou de classe.
 
 \begin{lstlisting}
 template<typename T>
@@ -97,22 +96,62 @@ foo( Machin() ); // appel d'un constructeur
 
 \section{Introduction}
 
+\subsection{Rappel sur le choix de la fonction par le compilateur}
+
+Différence overload - instanciation de template
+
+Lors de l'appel d'une fonction, le compilateur est capable de déterminer automatiquement la bonne fonction en fonction du type des arguments:
+\begin{lstlisting}
+void foo( int a );  // fonction 1
+void foo( float a); // fonction 2
+...
+foo( 4 ); // appel de la fonction 1
+foo( 1.23 ); // appel de la fonction 2
+\end{lstlisting}
+
+Sauf si la différence est sur le type de retour:
+\begin{lstlisting}
+int   foo();  // fonction 1
+float foo(); // fonction 2
+...
+int a = foo(); // impossible d'avoir une resolution automatique!
+\end{lstlisting}
+
+Dans le cas de template de fonctions, ce mécanisme de sélection intervient {\bf après} l'instanciation des templates.
 
 
 \section{En pratique: associé a enable\_if}
 
-Principe: \fbox{\tt std::enable\_if<condition, T>::type} sera équivalent à \fbox{\tt T} si condition est vraie.
+Principe:
+le trait \fbox{\tt std::enable\_if<condition, T>::type}%
+\footnote{Par la suite, et afin d'alléger l'écriture, on omettra le préfixe {\tt std::}}
+sera équivalent à \fbox{\tt T} si "condition" est "true".
 Sinon, cela donnera une construction invalide et la fonction sera rejetée du jeu de d'overload, {\bf sans génération d'erreur}.
 
 Par exemple, ceci:
 \begin{lstlisting}
 std::enable_if<condition, int>::type foo();
 \end{lstlisting}
-Si "condition" est vrai, alors ce sera équivalent à ceci:
+Si "condition" est vrai (valeur booléenne {\em true}), alors ce sera équivalent à ceci:
 \begin{lstlisting}
 int foo();
 \end{lstlisting}
 
+Cette condition peut s'utiliser
+\begin{itemize}
+	\item soit dans la liste des paramètres de type:
+\begin{lstlisting}
+template<typename T1,typename T2,enable_if<condition,int>* = nullptr>
+foo();
+\end{lstlisting}
+
+	\item soit à la place d'un type, dans la valeur de retour ou dans la liste des arguments:
+\begin{lstlisting}
+template<typename T1>
+foo(T1 a, enable_if<condition,int> b);
+\end{lstlisting}
+	
+\end{itemize}
 
 \begin{lstlisting}
 template< bool B, class T = void >
@@ -128,7 +167,8 @@ Si B est "true" (obtenu par exemple par {\tt std::is\_same<T,int>::value}, qui s
 \section{Exemples complets}
 
 
-Exemple 1: fonction qui renvoie un type dépendant du type en template
+\subsection{Exemple 1}
+Fonction qui renvoie un type dépendant du type en template
 
 \begin{lstlisting}
 template<typename T>
@@ -145,13 +185,14 @@ int main()
 {
     std::cout << myFunc( 42 );  // ok, affiche 43
     std::cout << myFunc( 'a' );  // ok, affiche 'b'
-    std::cout << myFunc( 3.14 );  // Erreur !        
+    std::cout << myFunc( 3.14 );  // Erreur, ne compile pas !      
 }
 \end{lstlisting}
 
 
 
-Exemple 2: fonction avec un argument
+\subsection{Exemple 2}
+Fonction avec un argument
 
 \begin{lstlisting}
 struct A
@@ -196,6 +237,41 @@ int main()
     A a4 = func(a1,3);
 }
 \end{lstlisting}
+
+\subsection{Exemple 3}
+
+Soit deux types sur lesquels on veut définir un opérateur de multiplication, qui renverra le second:
+\begin{lstlisting}
+struct A
+{
+ ...
+};
+struct B
+{
+...
+};
+int main()
+{
+	A a; B b:
+	B b2 = a * b;
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+\end{lstlisting}
+
+
+Mais en réalité, on en manipule plusieurs B, qui sont stockés dans un vecteur, et on veut pouvoir les multiplier tous avec un A, sans avoir à écrire nous même la boucle.
+Concrètement, on veut faire:
+\begin{lstlisting}
+int main()
+{
+std::vector<B> vb;
+auto vb2 = A * b;
+}
+\end{lstlisting}
+
+Il faut donc définit un opérateur
 
 \section{Cas pratiques}
 
