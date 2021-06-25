@@ -118,6 +118,35 @@ int a = foo(); // impossible d'avoir une resolution automatique!
 \end{lstlisting}
 
 Dans le cas de template de fonctions, ce mécanisme de sélection intervient {\bf après} l'instanciation des templates.
+Par exemple, si on a ceci:
+\begin{lstlisting}
+void foo( unsigned int a)
+{
+	cout << "unsigned int\n";
+}
+template<typename T>
+void foo(T t)
+{
+	cout << "template T\n";
+}
+\end{lstlisting}
+
+Alors le programme suivant:
+\begin{lstlisting}
+int main()
+{
+	foo( 42 );
+}
+\end{lstlisting}
+
+va afficher:
+\begin{lstlisting}
+template T!
+\end{lstlisting}
+
+Raison: un entier littéral ("42") est par défaut signé.
+Le compilateur va instancier le template de fonction avec ce type, et devra donc choisir entre 2 "overloads":
+la fonction avec un entier comme paramètre, et la fonction avec un "unsigned" comme paramètre, et il choisira la première.
 
 
 \section{En pratique: associé a enable\_if}
@@ -458,25 +487,26 @@ Par exemple:
 template<typename T>
 void foo( T t )
 {
-	impl_foo( t, /* ici un type deduit de T */  )
+	impl_foo( t, /* ici une valeur d'un type deduit de T */  )
 }
 
 template<typename T>
 void impl_foo( T t, int )
 {
-	// code pour int
+	// code pour T=int
 }
 
 template<typename T>
 void impl_foo( T t, float )
 {
-	// code pour float
+	// code pour T=float
 }
 \end{lstlisting}
 
 
 Pour bien clarifier l'intention, on introduit une couche de séparation de ces fonctions.
-S'il s'agit de fonctions libre, on les place dans un espace de nom distinct:
+S'il s'agit de fonctions libres, on les place dans un espace de nom distinct
+(par exemple {\tt priv} pour {\em private}):
 \begin{lstlisting}
 template<typename T>
 void foo( T t )
@@ -484,7 +514,7 @@ void foo( T t )
 	detail::impl_foo( t, /* ici un type deduit de T */  )
 }
 
-namespace detail {
+namespace priv {
 	template<typename T>
 	void impl_foo( T t, int )
 	{
@@ -496,10 +526,10 @@ namespace detail {
 	{
 		// code pour float
 	}
-}
+} // namespace priv
 \end{lstlisting}
 
-S'il s'agit de fonctions membre de classe, alors on les mets dans la partie "private":
+S'il s'agit de fonctions membre de classe, alors on les mets dans la partie "private" de la classe:
 
 \begin{lstlisting}
 struct MyClass
