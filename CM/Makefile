@@ -5,6 +5,10 @@
 #.PRECIOUS: %.texg %.tex
 .SECONDARY:
 
+# Required ! Because the default shell used by Make is "sh" (?), and with this shell,
+# the command "echo "\n xxx" does not print the linefeed
+SHELL=bash
+
 infiles   :=$(wildcard src/*.tex)
 filenames :=$(notdir $(basename $(infiles)))
 types     :=B H P
