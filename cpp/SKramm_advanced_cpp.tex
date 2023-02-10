@@ -149,13 +149,15 @@ Le compilateur va instancier le template de fonction avec ce type, et devra donc
 la fonction avec un entier comme paramètre, et la fonction avec un "unsigned" comme paramètre, et il choisira la première.
 
 
-\section{En pratique: associé a enable\_if}
+\section{En pratique: associé a enable\_if (SFINAE)}
 
 Principe:
 le trait \fbox{\tt std::enable\_if<condition, T>::type}%
 \footnote{Par la suite, et afin d'alléger l'écriture, on omettra le préfixe {\tt std::}}
 sera équivalent à \fbox{\tt T} si "condition" est "true".
 Sinon, cela donnera une construction invalide et la fonction sera rejetée du jeu de d'overload, {\bf sans génération d'erreur}.
+Cette technique s'appelle "SFINAE" (Substitution Failure Is Not An Error)
+(\href{https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error}{page WP}).
 
 Par exemple, ceci:
 \begin{lstlisting}
@@ -295,8 +297,8 @@ Concrètement, on veut faire:
 \begin{lstlisting}
 int main()
 {
-std::vector<B> vb;
-auto vb2 = A * b;
+	std::vector<B> vb;
+	auto vb2 = A * b;
 }
 \end{lstlisting}
 
