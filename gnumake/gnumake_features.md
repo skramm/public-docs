@@ -1,4 +1,4 @@
-# GnuMake : rans notes on some advanced features
+# GnuMake : random notes on some advanced features
 
 * author: S. Kramm
 * started: 2023-05-21
@@ -31,8 +31,8 @@ ref: https://stackoverflow.com/questions/27090032/
 
 ### 3 - `.SUFFIXES`
 
-GnuMake has a lot of builtin rules.
-For example
+GnuMake has a lot of builtin rules, that sometimes get in your way.
+
 You can automatically disable all these built-in rules by writing an empty rule:
 ```
 .SUFFIXES:
@@ -52,7 +52,7 @@ all:
 ```
 On the first line, it creates a subfolder. On second line it moves into it. And on third line, it attemps to copy the file from the above folder to the current one.
 
-This will fail, because each line is run in a new shell, that has the makefile's folder as current one.
+This will fail by default, because each line is run in a new shell, that has the makefile's folder as current one.
 So a correct writing should be:
 
 ```
@@ -79,7 +79,8 @@ Without this, make will run the first target found in makefile.
 
 ### B1 - SHELL
 
-This defines the shell to use for recipe execution. The default shell for GnuMake is
+This defines the shell to use for recipe execution.
+The default shell for GnuMake is
 `/bin/sh`. This can be demonstrated by the following target:
 ```
 all:
@@ -90,7 +91,8 @@ that should print `SHELL=/bin/sh`.
 If you need some features relying on another shell (say, `bash`), then you need to add
 `SHELL=bash` on top of your Makefile, else some of your recipes might fail unexpectedly.
 
-Note that some source recommend adding the full path. But as its location is not always the same ( can be `/usr/bin/bash` or `/bin/bash`), you might encounter some failures.
+Note that some source recommend adding the full path.
+But as its location is not always the same ( can be `/usr/bin/bash` or `/bin/bash`), you might encounter some failures.
 And as `bash` sould definitely be in the machine's path, the pathless definition above should be okay.
 
 Note: the  "make command substitution syntax" (double `$` sign) does not seem to work with variable assignements, so this:
@@ -98,6 +100,15 @@ Note: the  "make command substitution syntax" (double `$` sign) does not seem to
 SHELL=$$(which bash)
 ```
 does not work.
+For this kind of task, you need the [shell](https://www.gnu.org/software/make/manual/html_node/Shell-Function.html) make keyword.
+For example:
+```
+BASHLOC=$(shell which bash)
+
+sometarget:
+	echo "bash is $(BASHLOC)"
+```
+
 
 
 
