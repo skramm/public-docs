@@ -38,13 +38,14 @@ Related sources:
 
 Pasted here (just in case):
 
-__
-The central place for all URLS in the database is moz_places. The table moz_bookmarks refers to it by the foreign key column fk.
+---
 
-If you tag a bookmark, there are multiple entries in moz_bookmarks, all having the same reference fk: The first is the bookmark itself (having the title in the title column) For each tag, there's an additional entriy in moz_bookmarks having the same foreign key fk and refering to the tag in the parent coumn (which points to the moz_bookmarks row for the tag).
+_The central place for all URLS in the database is moz_places. The table moz_bookmarks refers to it by the foreign key column fk._
 
-If you have a bookmark 'http://stackoverflow.com'  titled 'Stackoverflow' with tags 'programming' and 'info', you will get:
+_If you tag a bookmark, there are multiple entries in moz_bookmarks, all having the same reference fk: The first is the bookmark itself (having the title in the title column) For each tag, there's an additional entriy in moz_bookmarks having the same foreign key fk and refering to the tag in the parent coumn (which points to the moz_bookmarks row for the tag)._
 
+_If you have a bookmark 'http://stackoverflow.com' titled 'Stackoverflow' with tags 'programming' and 'info', you will get:_
+```
 moz_places
 ----------
 id    url   (some more)
@@ -58,5 +59,6 @@ id    type    fk     parent    title          (other columns omitted...)
 334   1       3636   333       (NULL)         (link to 'programming' tag)
 335   2       (NULL) 4         info           (info tag, parent=4 see above)
 336   1       3636   335       (NULL)         (link to 'info' tag)
+```
 
-__
+---
