@@ -42,7 +42,7 @@ Pasted here (just in case):
 
 _The central place for all URLS in the database is moz_places. The table moz_bookmarks refers to it by the foreign key column fk._
 
-_If you tag a bookmark, there are multiple entries in moz_bookmarks, all having the same reference fk: The first is the bookmark itself (having the title in the title column) For each tag, there's an additional entriy in moz_bookmarks having the same foreign key fk and refering to the tag in the parent coumn (which points to the moz_bookmarks row for the tag)._
+_If you tag a bookmark, there are multiple entries in moz_bookmarks, all having the same reference fk: The first is the bookmark itself (having the title in the title column) For each tag, there's an additional entry in moz_bookmarks having the same foreign key fk and refering to the tag in the parent coumn (which points to the moz_bookmarks row for the tag)._
 
 _If you have a bookmark 'http://stackoverflow.com' titled 'Stackoverflow' with tags 'programming' and 'info', you will get:_
 ```
@@ -62,3 +62,25 @@ id    type    fk     parent    title          (other columns omitted...)
 ```
 
 ---
+
+
+This [question](https://superuser.com/questions/771110/) from SO addresses this issue but unfortunately, none of the provided solutions seem to work anymore.
+
+
+## Tools
+
+Sqlite provides a CLI app: `sqlite`  
+Can be installed with:
+`$ sudo apt install sqlite`
+
+A GUI app is available here: https://sqlitebrowser.org/
+
+Can be installed with:
+`$ sudo apt install sqlitebrowser`
+
+
+
+
+
+
+
