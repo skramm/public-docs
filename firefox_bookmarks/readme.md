@@ -69,7 +69,7 @@ This [question](https://superuser.com/questions/771110/) from SO addresses this 
 
 ## Tools
 
-Sqlite provides a CLI app: `sqlite`  
+Sqlite provides a CLI app: `sqlite3`.  
 Can be installed with:
 `$ sudo apt install sqlite`
 
