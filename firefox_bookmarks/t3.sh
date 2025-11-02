@@ -1,5 +1,7 @@
 # t3.sh
 
+# single argument (tag)
+
 set +x
 nb=$#
 
@@ -23,11 +25,13 @@ echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >t
 echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
 sqlite3 <temp_command >out3.txt
 
-index2=$(cat out3.txt)
-echo "index2=$index2"
 
 echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >temp_command
-echo "select url from moz_places where id='$index2';" >>temp_command
+for a in $(cat out3.txt);
+do
+	echo $a
+	echo "select url from moz_places where id='$a';" >>temp_command
+done
 sqlite3 <temp_command >out4.txt
 
 
