@@ -1,21 +1,32 @@
 # t3.sh
 # Get Single BOOKmark
+set +x
+
+# AUTOMATE THIS !
+fin=/home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite
 
 # single argument (tag)
 
-set +x
-nb=$#
+# make sure the app is available
+which sqlite3 >/dev/null
+if [ $? != 0 ]
+then
+	echo "sqlite3 is not available, please install first"
+	exit 1
+fi
 
+
+nb=$#
 if [ $nb == 0 ]
 then
 	echo "error, you need to give a tag"
-	echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >temp_command
+	echo ".open $fin" >temp_command
 	echo "select title from moz_bookmarks where parent=4;" >>temp_command
-	sqlite3 <temp_command >out0.txt
-	nb=$(cat out0.txt | wc -l)
+	sqlite3 <temp_command >/tmp/gsb0.txt
+	nb=$(cat /tmp/gsb0.txt | wc -l)
 	echo "available tags: $nb"
 
-	for a in $(cat out0.txt);
+	for a in $(cat /tmp/gsb0.txt);
 	do
 		echo -n "$a - "
 	done
@@ -23,22 +34,19 @@ then
 	exit 1
 fi
 
-#echo "nb arg=$# arg=$1"
-
-echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >temp_command
+echo ".open $fin" >temp_command
 echo "select id from moz_bookmarks where title='$1';" >>temp_command
-
 sqlite3 <temp_command >out1.txt
 
 index=$(cat out1.txt)
-echo "index=$index"
+#echo "index=$index"
 
-echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >temp_command
+echo ".open $fin" >temp_command
 echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
 sqlite3 <temp_command >out2.txt
 
 
-echo ".open /home/sk/.mozilla/firefox/z7do02ft.default-release/places.sqlite" >temp_command
+echo ".open $fin" >temp_command
 for a in $(cat out2.txt);
 do
 #	echo $a
@@ -46,18 +54,21 @@ do
 done
 sqlite3 <temp_command >out3.txt
 
+nblinks=$(cat out3.txt|wc -l)
+# generate output html file
 fout=gsbook.html
 echo -e "<html>\n<head>\n<title>gsbook output</title>" >$fout
-echo -e "</head>\n<body>\n" >>$fout
-echo -e "<h1>tag:$1</h1>\n" >>$fout
-echo -e "<ul>\n" >>$fout
-for link in $(cat out3.txt);
+echo -e "</head>\n<body>" >>$fout
+echo -e "<h1>tag: $1 ($nblinks links)</h1>" >>$fout
+echo -e "<ul>" >>$fout
+for link in $(cat out3.txt)
 do
 	echo -e "<li><a href='$link'>$link</a></li>\n" >>$fout
 done
 echo -e "</ul>\n</body>\n</html>" >>$fout
-xdg-open $fout
 
+# open output file in browser
+xdg-open $fout
 
 
 
