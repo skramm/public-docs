@@ -31,7 +31,7 @@ The file is called `places.sqlite` and is located (on a Linux machine) in this f
 `~/.mozilla/firefox/XXXXX.default-release`,
 with `XXXXX` being your current profile, that you can see in `~/.mozilla/firefox/profiles.ini`.
 
-(mine is currently ~100MB, so as you sse, I have a **lot** of bookmarks.
+(mine is currently ~100MB, so as you see, I have a **lot** of bookmarks.
 
 Related sources:
   - https://stackoverflow.com/a/740183/193789
@@ -77,6 +77,11 @@ A GUI app is available here: https://sqlitebrowser.org/
 
 Can be installed with:
 `$ sudo apt install sqlitebrowser`
+
+Manual: https://sqlite.org/cli.html
+
+
+## Notes
 
 
 
