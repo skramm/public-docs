@@ -70,9 +70,7 @@ echo ".open $fin" >temp_command
 echo "select id from moz_bookmarks where title='$1' AND type=2;" >>temp_command
 sqlite3 <temp_command >out1.txt
 
-rm out3.txt
 rm out2.txt
-
 for index in $(cat out1.txt)
 do
 	echo "index=$index"
@@ -83,7 +81,28 @@ do
 	sqlite3 <temp_command >>out2.txt
 done
 
+echo "out2 size=$(wc -l out2.txt)"
+fk=$(cat out2.txt)
+
+# get other tags with same URL
+echo ".open $fin" >temp_command
+echo "select parent from moz_bookmarks where fk='$fk';" >>temp_command
+sqlite3 <temp_command >out4.txt
+
+rm out5.txt
+for tag in $(cat out4.txt)
+do
+	echo "tag=$tag"
+	echo ".open $fin" >temp_command
+#	echo "select title from moz_bookmarks where id='$tag' AND position=0;" >>temp_command
+	echo "select title from moz_bookmarks where id='$tag' AND position=0;" >>temp_command
+	sqlite3 <temp_command >>out5.txt
+done
+
+exit
+
 # 3 - Fetch the URLs from table moz_places using the indexes previously extracted
+rm out3.txt
 echo ".open $fin" >temp_command
 for a in $(cat out2.txt);
 do
