@@ -1,0 +1,27 @@
+#!/bin/bash
+# getffprofile
+
+
+# Get Firefox Profile
+#set +x
+
+
+# Fetch default profile folder of current user
+str=$(grep Default ~/.mozilla/firefox/profiles.ini)
+
+if [ $? != 0 ]
+then
+	echo "Error: unable to fetch current user's default profile"
+	exit 1
+fi
+# split string
+IFS=" ";read -a tab1 <<< "$str"
+#echo "tab1=$tab1"
+IFS="=";read -a tab2 <<< "${tab1[0]}"
+#echo "tab2=$tab2"
+folder=${tab2[1]}
+
+set -x
+echo "${tab2[1]}">ffprofile.txt
+echo "Firefox profile folder=$HOME/.mozilla/firefox/${tab2[1]}"
+

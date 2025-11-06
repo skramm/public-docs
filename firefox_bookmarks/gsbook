@@ -67,16 +67,21 @@ IFS=$' \t\n'
 
 # 1 - Fetch the tag id in table moz_bookmarks
 echo ".open $fin" >temp_command
-echo "select id from moz_bookmarks where title='$1';" >>temp_command
+echo "select id from moz_bookmarks where title='$1' AND type=2;" >>temp_command
 sqlite3 <temp_command >out1.txt
 
-index=$(cat out1.txt)
-#echo "index=$index"
+rm out3.txt
+rm out2.txt
 
-# 2 - Fetch the list of URL ids having that tag
-echo ".open $fin" >temp_command
-echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
-sqlite3 <temp_command >out2.txt
+for index in $(cat out1.txt)
+do
+	echo "index=$index"
+	
+	# 2 - Fetch the list of URL ids having that tag
+	echo ".open $fin" >temp_command
+	echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
+	sqlite3 <temp_command >>out2.txt
+done
 
 # 3 - Fetch the URLs from table moz_places using the indexes previously extracted
 echo ".open $fin" >temp_command
@@ -85,7 +90,7 @@ do
 #	echo "a=$a"
 	echo "select url from moz_places where id='$a';" >>temp_command
 done
-sqlite3 <temp_command >out3.txt
+sqlite3 <temp_command >>out3.txt
 
 # 4 - generate output html file
 nblinks=$(cat out3.txt|wc -l)
