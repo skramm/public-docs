@@ -21,7 +21,7 @@ IFS="=";read -a tab2 <<< "${tab1[0]}"
 #echo "tab2=$tab2"
 folder=${tab2[1]}
 
-set -x
+set +x
 echo "${tab2[1]}">ffprofile.txt
 echo "Firefox profile folder=$HOME/.mozilla/firefox/${tab2[1]}"
 
