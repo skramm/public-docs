@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# gsbook2
+# gmbook3
 
-# Get Single tag BOOKmark
+# Get Multiple tag BOOKmark
 set +x
 
 mkdir -p /tmp/ffbookmarks
@@ -31,9 +31,9 @@ then
 fi
 # split string
 IFS=" ";read -a tab1 <<< "$str"
-#echo "tab1=$tab1"
+echo "tab1=$tab1"
 IFS="=";read -a tab2 <<< "${tab1[0]}"
-#echo "tab2=$tab2"
+echo "tab2=$tab2"
 folder=${tab2[1]}
 
 fin=/home/sk/.mozilla/firefox/$folder/places.sqlite
@@ -43,7 +43,6 @@ then
 	echo "Error, Firefox sqlite file $fin does not exist"
 	exit 2
 fi
-
 # restore IFS
 IFS=$' \t\n'
 
@@ -59,38 +58,52 @@ then
 	nb=$(cat /tmp/gsb0.txt | wc -l)
 	echo "available tags: $nb"
 
-#	read
-	for a in $(cat /tmp/gsb0.txt)
+	for a in $(cat /tmp/gsb0.txt);
 	do
-		echo -n "${a}-"
-#		echo -n "a- "
+		echo -n "$a - "
 	done
 	echo ""
 	exit 1
 fi
 
-
-# 1 - Fetch the tag id in table moz_bookmarks
-echo ".open $fin" >temp_command
-echo "select id from moz_bookmarks where title='$1' AND type=2;" >>temp_command
-sqlite3 <temp_command >out1.txt
-
-nb1=$(echo out1.txt | wc -l)
-if ! [ $nb = 1 ]; then
-	echo "Error, file out1.txt has $nb1 lines"
-	exit 1
-fi
-
-rm out2.txt
-for index in $(cat out1.txt)
+for tag in "$@"
 do
-	echo "index=$index"
+	echo -e "\n* arg=$tag"
 
-	# 2 - Fetch the list of URL ids having that tag
+	# 1 - Fetch the tag id in table moz_bookmarks
 	echo ".open $fin" >temp_command
-	echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
-	sqlite3 <temp_command >>out2.txt
+	echo "select id from moz_bookmarks where title='$tag' AND type=2;" >>temp_command
+	sqlite3 <temp_command >out1.txt
+
+
+	nb1=$(echo out1.txt | wc -l)
+	if ! [ $nb1 = 1 ]; then
+		echo "Error, file out1.txt has $nb1 lines"
+		exit 1
+	fi
+
+	rm out2.txt
+	for index in $(cat out1.txt)
+	do
+		echo "index=$index"
+
+		# 2 - Fetch the list of URL ids having that tag
+		echo ".open $fin" >temp_command
+		echo "select fk from moz_bookmarks where parent='$index';" >>temp_command
+		sqlite3 <temp_command >>out2.txt
+	done
+	
+	rm out4.txt
+	for fk in $(cat out2.txt)
+	do
+		echo ".open $fin" >temp_command
+		echo "select parent from moz_bookmarks where fk='$fk';" >>temp_command
+		sqlite3 <temp_command >>out4.txt
+	done
+	
 done
+
+exit 1
 
 
 echo "out2 size=$(wc -l out2.txt)"
