@@ -55,10 +55,11 @@ then
 	nb=$(cat /tmp/gsb0.txt | wc -l)
 	echo "available tags: $nb"
 
-	for a in $(cat /tmp/gsb0.txt);
+	sort /tmp/gsb0.txt > /tmp/gsb1.txt
+	while read a
 	do
-		echo -n "$a - "
-	done
+		echo -n "$a-"
+	done < /tmp/gsb1.txt
 	echo ""
 	exit 1
 fi
@@ -99,7 +100,7 @@ do
 	sqlite3 <temp_command >>out5.txt
 done
 
-exit
+
 
 # 3 - Fetch the URLs from table moz_places using the indexes previously extracted
 rm out3.txt
