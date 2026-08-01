@@ -1,0 +1,59 @@
+#!/bin/bash
+
+
+#!/bin/bash
+
+DB="$HOME/.mozilla/firefox/z7do02ft.default-release/places.sqlite"
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 tag1 [tag2 ...]"
+    exit 1
+fi
+
+tags=$(printf "'%s'," "$@")
+tags=${tags%,}
+
+sqlite3 -separator ";" "$DB" <<EOF
+
+CREATE TEMP VIEW bookmark_tags AS
+SELECT
+    b.fk        AS place_id,
+    p.url       AS url,
+    tag.title   AS tag
+FROM moz_bookmarks tag
+JOIN moz_bookmarks b
+     ON b.parent = tag.id
+JOIN moz_places p
+     ON p.id = b.fk
+WHERE tag.parent = (
+    SELECT id
+    FROM moz_bookmarks
+    WHERE guid='tags________'
+);
+
+
+SELECT
+    url,
+    COALESCE(
+        (
+            SELECT group_concat(tag,';')
+            FROM (
+                SELECT tag
+                FROM bookmark_tags bt2
+                WHERE bt2.place_id = bt.place_id
+                  AND tag NOT IN ($tags)
+                ORDER BY tag
+            )
+        ),
+        ''
+    )
+FROM bookmark_tags bt
+WHERE tag IN ($tags)
+GROUP BY place_id
+HAVING COUNT(DISTINCT tag) = $# 
+ORDER BY url;
+
+EOF
+
+echo "fini"
+
